@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "tensor-chess"
+version = "0.1.0"
+description = "Pygame chess app"
+authors = ["Antonio Zea Jr <zeajantonio@gmail.com>"]
+readme = "README.md"
+packages = [{include = "tensor_chess"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pygame = "^2.1.3"
+cytoolz = "^0.12.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
