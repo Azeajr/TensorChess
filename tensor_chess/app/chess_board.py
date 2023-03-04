@@ -10,7 +10,7 @@ class ChessBoard:
     def __init__(self, table_size, board_pos):
         self.table_size = table_size
         self.board_pos = board_pos
-        self.surface, self.grid = create_board_surface(self.table_size)
+        self.board, self.grid = create_board_surface(self.table_size)
 
     def get_square_under_mouse(self):
         mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - pygame.Vector2(
@@ -45,9 +45,9 @@ def create_board_surface(tile_size):
         grid.append([])
         for col in range(8):
             if (row + col) % 2 == 0:
-                color = (0, 0, 0)
-            else:
                 color = (255, 255, 255)
+            else:
+                color = (0, 0, 0)
             rect = pygame.draw.rect(
                 surface,
                 color,
