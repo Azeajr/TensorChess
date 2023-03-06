@@ -3,7 +3,6 @@ import sys
 import pygame
 
 from settings import Settings
-from chess_set import ChessSet
 from chess_board import ChessBoard
 
 
@@ -15,19 +14,18 @@ class ChessGame:
             (self.settings.screen_width, self.settings.screen_height)
         )
         pygame.display.set_caption("Tensor Chess")
-        
-        self.chess_set = ChessSet(self)
-        self.chess_board = ChessBoard(self.settings.table_size, self.settings.board_pos)
 
         self.clock = pygame.time.Clock()
-        
-        
+
+        self.chess_board = ChessBoard(
+            self.settings.square_size, self.settings.board_pos
+        )
 
     def run_game(self):
         while True:
             self._check_events()
             self._update_screen()
-            self.clock.tick(0.25)
+            self.clock.tick(1)
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -39,27 +37,11 @@ class ChessGame:
 
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
-
-        # Draw the chess board.
-        self.screen.blit(self.chess_board.surface, self.settings.board_pos)
-
-        # Draw a row of black pieces.
-        for index, piece in enumerate(self.chess_set.pieces[:6]):
-            piece.x = index * 100
-            piece.blitme()
-
-        # # Draw a row of white pieces.
-        for index, piece in enumerate(self.chess_set.pieces[6:]):
-            piece.x = index * 100
-            piece.y = 100
-            piece.blitme()
-
-        piece, x, y = self.chess_board.get_square_under_mouse()
-        print(piece, x, y)
-        
-
+        self.screen.blit(self.chess_board.board, self.settings.board_pos)
+        print(self.chess_board.get_square_under_mouse())
 
         pygame.display.flip()
+
 
 if __name__ == "__main__":
     chess_game = ChessGame()
