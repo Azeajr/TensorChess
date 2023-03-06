@@ -64,4 +64,4 @@ class SpriteSheet:
             for col in range(num_cols)
         ]
 
-        return self.images_at(rects)
+        return self.images_at(rects, colorkey=(255, 0, 255))
