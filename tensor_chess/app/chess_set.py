@@ -1,7 +1,8 @@
 from itertools import product
 from typing import Any
+from dataclasses import dataclass
 
-from pygame import Surface
+from pygame import Surface, Rect
 
 from spritesheet import SpriteSheet
 
@@ -45,22 +46,18 @@ class ChessSet:
         }
         return pieces
 
-
+@dataclass
 class Piece:
-    """Represents a chess piece."""
+    screen:Surface = None
+    name:str = None
+    color:str = None
+    image:Surface = None
+    rect:Rect = None
 
-    def __init__(self, screen, name, color):
-        """Initializes attributes of a chess piece.
+    def __str__(self) -> str:
+        return f"{self.color} {self.name}"
 
-        Args:
-            chess_game (_type_): _description_
-        """
-        self.image = None
-        self.name = name
-        self.color = color
-
-        self.screen = screen
-        self.rect = None
+    def __post_init__(self):
         self.__load_images()
         self.image = self._piece_images[(self.color, self.name)]
 

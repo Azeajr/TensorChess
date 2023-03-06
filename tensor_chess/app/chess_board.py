@@ -37,6 +37,7 @@ class ChessBoard:
                         self.square_size,
                     ),
                 )
+                piece = None
                 if 0 <= row <= 1:
                     piece = next(chess_set.chess_set["black"])
                     piece.blitme(rect.center)
@@ -48,8 +49,8 @@ class ChessBoard:
                     rect,
                     piece=piece,
                     color=color,
-                    row=row,
-                    column=col,
+                    row=8 - row,
+                    column=chr(col + 97),
                     size=self.square_size,
                 )
                 grid[row].append(square)
@@ -74,5 +75,8 @@ class Square:
     piece: Piece = None
     color: str = None
     row: int = None
-    column: int = None
+    column: str = None
     size: int = None
+
+    def __str__(self):
+        return f"{self.column}{self.row} {self.piece}"
