@@ -46,13 +46,14 @@ class ChessSet:
         }
         return pieces
 
+
 @dataclass
 class Piece:
-    screen:Surface = None
-    name:str = None
-    color:str = None
-    image:Surface = None
-    rect:Rect = None
+    screen: Surface = None
+    name: str = None
+    color: str = None
+    image: Surface = None
+    rect: Rect = None
 
     def __str__(self) -> str:
         return f"{self.color} {self.name}"

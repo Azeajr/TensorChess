@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import pygame
 from pygame.surface import Surface
+from pygame.rect import Rect
 
 from chess_set import ChessSet, Piece
 
@@ -27,16 +28,24 @@ class ChessBoard:
                     color = (255, 255, 255)
                 else:
                     color = (0, 0, 0)
-                rect = pygame.draw.rect(
-                    board,
-                    color,
-                    (
-                        col * self.square_size,
-                        row * self.square_size,
-                        self.square_size,
-                        self.square_size,
-                    ),
+                rect = Rect(
+                    col * self.square_size,
+                    row * self.square_size,
+                    self.square_size,
+                    self.square_size,
                 )
+
+                square = Square(
+                    board,
+                    rect,
+                    piece=None,
+                    color=color,
+                    row=8 - row,
+                    column=chr(col + 97),
+                    size=self.square_size,
+                )
+                square.drawSquare()
+
                 piece = None
                 if 0 <= row <= 1:
                     piece = next(chess_set.chess_set["black"])
@@ -44,15 +53,8 @@ class ChessBoard:
                 elif 6 <= row <= 7:
                     piece = next(chess_set.chess_set["white"])
                     piece.blitme(rect.center)
+                square.piece = piece
 
-                square = Square(
-                    rect,
-                    piece=piece,
-                    color=color,
-                    row=8 - row,
-                    column=chr(col + 97),
-                    size=self.square_size,
-                )
                 grid[row].append(square)
         return board, grid
 
@@ -66,17 +68,52 @@ class ChessBoard:
                 return (self.grid[y][x], x, y)
         except IndexError:
             pass
-        return (None, x, y)
+        return (None, None, None)
+
+    def highlight_selected_square(self):
+        square, x, y = self.get_square_under_mouse()
+        if square:
+            pygame.draw.rect(
+                self.board,
+                (255, 0, 0),
+                square.rect,
+                4,
+            )
+        return square
+
+    def drag_piece(self, screen, piece):
+        pass
 
 
 @dataclass
 class Square:
-    rect: pygame.Rect
+    surface: Surface = None
+    rect: pygame.Rect = None
     piece: Piece = None
     color: str = None
     row: int = None
     column: str = None
     size: int = None
 
+    def drawSquare(self):
+        pygame.draw.rect(
+            self.surface,
+            self.color,
+            self.rect,
+        )
+
     def __str__(self):
         return f"{self.column}{self.row} {self.piece}"
+
+
+class MoveValidator:
+    def __init__(self, board, x, y):
+        self.board = board
+        self.x = x
+        self.y = y
+
+    def is_valid_move(self, start_square, end_square):
+        return (
+            end_square.row == start_square.row + self.y
+            and end_square.column == start_square.column + self.x
+        )
