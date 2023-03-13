@@ -1,4 +1,6 @@
 import pygame
+from pygame import base
+from pygame import constants
 
 
 class SpriteSheet:
@@ -6,9 +8,9 @@ class SpriteSheet:
         """Load the sheet."""
         try:
             self.sheet = pygame.image.load(filename).convert()
-        except pygame.error as e:
+        except base.error as error:
             print(f"Unable to load spritesheet image: {filename}")
-            raise SystemExit(e) from e
+            raise SystemExit(error) from error
 
     def image_at(self, rectangle, colorkey=None):
         """Load a specific image from a specific rectangle."""
@@ -19,7 +21,7 @@ class SpriteSheet:
         if colorkey is not None:
             if colorkey is -1:
                 colorkey = image.get_at((0, 0))
-            image.set_colorkey(colorkey, pygame.RLEACCEL)
+            image.set_colorkey(colorkey, constants.RLEACCEL)
         return image
 
     def images_at(self, rects, colorkey=None):
