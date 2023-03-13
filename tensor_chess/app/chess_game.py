@@ -1,30 +1,26 @@
 import sys
-from dataclasses import dataclass
 
-import pygame
+from pygame import constants
+from pygame import event
+from pygame import base
+from pygame import display
+from pygame import time
+from pygame import mouse
 
 from settings import Settings
 from chess_board import ChessBoard, Square
-from chess_set import Piece
-
-
-@dataclass
-class Selection:
-    piece: Piece
-    start_square: Square
-    end_square: Square
 
 
 class ChessGame:
     def __init__(self):
-        pygame.init()
+        base.init()
         self.settings = Settings()
-        self.screen = pygame.display.set_mode(
+        self.screen = display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
         )
-        pygame.display.set_caption("Tensor Chess")
+        display.set_caption("Tensor Chess")
 
-        self.clock = pygame.time.Clock()
+        self.clock = time.Clock()
 
         self.chess_board = ChessBoard(
             self.settings.square_size, self.settings.board_pos
@@ -38,25 +34,30 @@ class ChessGame:
             self.clock.tick(60)
 
     def _check_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for this_event in event.get():
+            if this_event.type == constants.QUIT:
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
+            elif this_event.type == constants.KEYDOWN:
+                if this_event.key == constants.K_q:
                     sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                square, *_ = self.chess_board.get_square_under_mouse()
+            elif this_event.type == constants.MOUSEBUTTONDOWN:
+                square = self.chess_board.get_square_under_mouse()
                 if square and square.piece:
                     self.selection = square
 
-            elif event.type == pygame.MOUSEBUTTONUP:
-                square, *_ = self.chess_board.get_square_under_mouse()
-                if square and self.selection:
+            elif this_event.type == constants.MOUSEBUTTONUP:
+                square = self.chess_board.get_square_under_mouse()
+                if (
+                    square
+                    and self.selection
+                    and (square != self.selection)
+                    and self.selection.piece.validator(square, self.selection)
+                ):
                     square.piece = self.selection.piece
                     self.selection.piece = None
-                    square.drawSquare()
+                    square.draw_square()
                     square.piece.blitme(square.rect.center)
-                    self.selection.drawSquare()
+                    self.selection.draw_square()
 
                 self.selection = None
 
@@ -65,9 +66,9 @@ class ChessGame:
         self.screen.blit(self.chess_board.board, self.settings.board_pos)
 
         if self.selection:
-            self.screen.blit(self.selection.piece.image, pygame.mouse.get_pos())
+            self.screen.blit(self.selection.piece.image, mouse.get_pos())
 
-        pygame.display.flip()
+        display.flip()
 
 
 if __name__ == "__main__":
