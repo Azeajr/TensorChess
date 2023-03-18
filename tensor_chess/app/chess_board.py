@@ -4,6 +4,13 @@ import pygame
 from pygame import draw
 
 from chess_set import ChessSet, Piece
+from chess_moves import Validators
+
+
+@dataclass
+class Coordinate:
+    x: int
+    y: int
 
 
 @dataclass
@@ -12,8 +19,7 @@ class Square:
     rect: pygame.Rect
     piece: Piece
     color: str
-    row: int
-    column: int
+    cord: Coordinate
     size: int
 
     def draw_square(self):
@@ -24,7 +30,7 @@ class Square:
         )
 
     def __str__(self):
-        return f"{chr(self.column + 97)}{self.row} {self.piece}"
+        return f"{chr(self.cord.x + 97)}{self.cord.y} {self.piece}"
 
 
 class ChessBoard:
@@ -32,6 +38,7 @@ class ChessBoard:
         self.square_size = square_size
         self.board_pos = board_pos
         self.board, self.grid = self.__create_board_surface()
+        self.validators = Validators(self.grid)
 
     def __create_board_surface(self) -> tuple[pygame.Surface, list[list[Square]]]:
         """Create a surface for the chess board."""
@@ -60,8 +67,7 @@ class ChessBoard:
                     rect,
                     piece=None,
                     color=color,
-                    row=8 - row,
-                    column=col,
+                    cord=Coordinate(col, 8 - row),
                     size=self.square_size,
                 )
                 square.draw_square()

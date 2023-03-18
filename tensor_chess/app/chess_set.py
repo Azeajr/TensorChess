@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Any, Callable
+from typing import Any
 from dataclasses import dataclass, field
 
 import pygame
@@ -55,7 +55,6 @@ class Piece:
     image: pygame.Surface = field(init=False)
     rect: pygame.Rect = field(init=False)
     direction: int = field(init=False)
-    validator: Callable[[tuple[int, int], tuple[int, int]], bool] = field(init=False)
 
     def __str__(self) -> str:
         return f"{self.color} {self.name}"
@@ -63,8 +62,7 @@ class Piece:
     def __post_init__(self):
         self.__load_images()
         self.image = self._piece_images[(self.color, self.name)]
-        self.direction = 1 if self.color == "black" else -1
-        self.__load_validators()
+        self.direction = 1 if self.color == "white" else -1
 
     def blitme(self, center: tuple[int, int]) -> None:
         """Draws the piece at its current location."""
@@ -85,24 +83,3 @@ class Piece:
                 product(colors, names), pieces_ss.load_grid_images(2, 6, 64, 72, 68, 48)
             )
         )
-
-    def __load_validators(self) -> None:
-        validators = {
-            "pawn": lambda start, end: start.column == end.column
-            and start.row + 1 * self.direction == end.row,
-            "rook": lambda start, end: start.column == end.column
-            or start.row == end.row,
-            "knight": lambda start, end: abs(start.column - end.column) == 2
-            and abs(start.row - end.row) == 1
-            or abs(start.column - end.column) == 1
-            and abs(start.row - end.row) == 2,
-            "bishop": lambda start, end: abs(start.column - end.column)
-            == abs(start.row - end.row),
-            "queen": lambda start, end: abs(start.column - end.column)
-            == abs(start.row - end.row)
-            or start.column == end.column
-            or start.row == end.row,
-            "king": lambda start, end: abs(start.column - end.column) <= 1
-            and abs(start.row - end.row) <= 1,
-        }
-        self.validator = validators[self.name]
