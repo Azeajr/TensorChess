@@ -49,17 +49,17 @@ class Validators:
     def _rook_validator(self, start: Square, end: Square, _) -> bool:
         """Validates a rook move."""
         if start.cord.x == end.cord.x:
-            for row in range(
+            for y in range(
                 min(start.cord.y, end.cord.y) + 1, max(start.cord.y, end.cord.y)
             ):
-                if self.grid[row][start.cord.x].piece:
+                if self.grid[y][start.cord.x].piece:
                     return False
             return True
         elif start.cord.y == end.cord.y:
-            for column in range(
+            for x in range(
                 min(start.cord.x, end.cord.x) + 1, max(start.cord.x, end.cord.x)
             ):
-                if self.grid[start.cord.y][column].piece:
+                if self.grid[start.cord.y][x].piece:
                     return False
             return True
 

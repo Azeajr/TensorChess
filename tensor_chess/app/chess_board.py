@@ -48,16 +48,16 @@ class ChessBoard:
         chess_set = ChessSet(board)
 
         grid: list[list[Square]] = []
-        for row in range(8):
+        for y in range(8):
             grid.append([])
-            for col in range(8):
-                if (row + col) % 2 == 0:
+            for x in range(8):
+                if (y + x) % 2 == 0:
                     color = (255, 255, 255)
                 else:
                     color = (0, 0, 0)
                 rect = pygame.Rect(
-                    col * self.square_size,
-                    row * self.square_size,
+                    x * self.square_size,
+                    y * self.square_size,
                     self.square_size,
                     self.square_size,
                 )
@@ -67,31 +67,31 @@ class ChessBoard:
                     rect,
                     piece=None,
                     color=color,
-                    cord=Coordinate(col, 8 - row),
+                    cord=Coordinate(x, 8 - y),
                     size=self.square_size,
                 )
                 square.draw_square()
 
                 piece: Piece = None
-                if 0 <= row <= 1:
+                if 0 <= y <= 1:
                     piece = next(chess_set.chess_set["black"])
                     piece.blitme(rect.center)
-                elif 6 <= row <= 7:
+                elif 6 <= y <= 7:
                     piece = next(chess_set.chess_set["white"])
                     piece.blitme(rect.center)
                 square.piece = piece
 
-                grid[row].append(square)
+                grid[y].append(square)
         return board, grid
 
     def get_square_under_mouse(self) -> Square:
         mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - pygame.Vector2(
             self.board_pos
         )
-        column, row = [int(v // self.square_size) for v in mouse_pos]
+        x, y = [int(v // self.square_size) for v in mouse_pos]
         try:
-            if column >= 0 and row >= 0:
-                return self.grid[row][column]
+            if x >= 0 and y >= 0:
+                return self.grid[y][x]
         except IndexError:
             pass
 
