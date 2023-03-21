@@ -12,6 +12,9 @@ class Coordinate:
     x: int
     y: int
 
+    def __str__(self):
+        return f"{chr(self.x + 97)}{8 - self.y}"
+
 
 @dataclass
 class Square:
@@ -30,7 +33,7 @@ class Square:
         )
 
     def __str__(self):
-        return f"{chr(self.cord.x + 97)}{self.cord.y} {self.piece}"
+        return f"{self.cord} {self.piece}"
 
 
 class ChessBoard:
@@ -47,9 +50,8 @@ class ChessBoard:
 
         chess_set = ChessSet(board)
 
-        grid: list[list[Square]] = []
+        grid: list[list[Square]] = [[None for x in range(8)] for y in range(8)]
         for y in range(8):
-            grid.append([])
             for x in range(8):
                 if (y + x) % 2 == 0:
                     color = (255, 255, 255)
@@ -67,7 +69,7 @@ class ChessBoard:
                     rect,
                     piece=None,
                     color=color,
-                    cord=Coordinate(x, 8 - y),
+                    cord=Coordinate(x, y),
                     size=self.square_size,
                 )
                 square.draw_square()
@@ -81,7 +83,7 @@ class ChessBoard:
                     piece.blitme(rect.center)
                 square.piece = piece
 
-                grid[y].append(square)
+                grid[x][y] = square
         return board, grid
 
     def get_square_under_mouse(self) -> Square:
@@ -91,7 +93,7 @@ class ChessBoard:
         x, y = [int(v // self.square_size) for v in mouse_pos]
         try:
             if x >= 0 and y >= 0:
-                return self.grid[y][x]
+                return self.grid[x][y]
         except IndexError:
             pass
 

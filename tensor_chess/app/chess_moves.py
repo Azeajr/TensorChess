@@ -10,10 +10,9 @@ if TYPE_CHECKING:
 @dataclass
 class Validators:
     """Represents a chess piece validator."""
+
     grid: list[list[Square]]
-    validator: dict[str, Callable[[Square, Square], bool]] = field(
-        default_factory=dict
-    )
+    validator: dict[str, Callable[[Square, Square], bool]] = field(default_factory=dict)
 
     # name: Optional[str] = None
     # validator: Optional[Callable[[Square, Square], bool]] = None
@@ -31,6 +30,12 @@ class Validators:
 
         def __double_move() -> bool:
             """Validates a double move."""
+            if direction == 1:
+                if start.cord.y != 1:
+                    return False
+            elif direction == -1:
+                if start.cord.y != 6:
+                    return False
             return (
                 start.cord.x == end.cord.x
                 and start.cord.y + 2 * direction == end.cord.y
@@ -44,6 +49,7 @@ class Validators:
                 and start.cord.y + 1 * direction == end.cord.y
                 and end.piece
             )
+
         return __single_move() or __double_move() or __capture()
 
     def _rook_validator(self, start: Square, end: Square, _) -> bool:
@@ -52,18 +58,16 @@ class Validators:
             for y in range(
                 min(start.cord.y, end.cord.y) + 1, max(start.cord.y, end.cord.y)
             ):
-                if self.grid[y][start.cord.x].piece:
+                if self.grid[start.cord.x][y].piece:
                     return False
             return True
         elif start.cord.y == end.cord.y:
             for x in range(
                 min(start.cord.x, end.cord.x) + 1, max(start.cord.x, end.cord.x)
             ):
-                if self.grid[start.cord.y][x].piece:
+                if self.grid[x][start.cord.y].piece:
                     return False
             return True
-
-        return start.cord.x == end.cord.x or start.cord.y == end.cord.y
 
     def _knight_validator(self, start: Square, end: Square, _) -> bool:
         """Validates a knight move."""
@@ -76,7 +80,36 @@ class Validators:
 
     def _bishop_validator(self, start: Square, end: Square, _) -> bool:
         """Validates a bishop move."""
-        return abs(start.cord.x - end.cord.x) == abs(start.cord.y - end.cord.y)
+        def slope(start: Square, end: Square) -> float:
+            """Returns the slope of the line between two squares."""
+            return (end.cord.y - start.cord.y) / (end.cord.x - start.cord.x)
+        
+        if abs(start.cord.x - end.cord.x) == abs(start.cord.y - end.cord.y):
+            if slope(start, end) == 1.0:
+                for x, y in zip(
+                    range(
+                        min(start.cord.x, end.cord.x) + 1, max(start.cord.x, end.cord.x)
+                    ),
+                    range(
+                        min(start.cord.y, end.cord.y) + 1, max(start.cord.y, end.cord.y)
+                    ),
+                ):
+                    if self.grid[x][y].piece:
+                        return False
+                return True
+            elif slope(start, end) == -1.0:
+                for x, y in zip(
+                    range(
+                        min(start.cord.x, end.cord.x) + 1, max(start.cord.x, end.cord.x)
+                    ),
+                    range(
+                        max(start.cord.y, end.cord.y) - 1, min(start.cord.y, end.cord.y), -1
+                    ),
+                ):
+                    if self.grid[x][y].piece:
+                        return False
+                return True
+            return False
 
     def _queen_validator(self, start: Square, end: Square, _) -> bool:
         """Validates a queen move."""
@@ -87,8 +120,7 @@ class Validators:
     def _king_validator(self, start: Square, end: Square, _) -> bool:
         """Validates a king move."""
         return (
-            abs(start.cord.x - end.cord.x) <= 1
-            and abs(start.cord.y - end.cord.y) <= 1
+            abs(start.cord.x - end.cord.x) <= 1 and abs(start.cord.y - end.cord.y) <= 1
         )
 
     def __post_init__(self):
@@ -102,7 +134,6 @@ class Validators:
 
         # if not self.name:
         #     raise ValueError("Validator name is required.")
-
 
         # if self.name == "pawn":
         #     self.validator = self._pawn_validator

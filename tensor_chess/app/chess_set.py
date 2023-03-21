@@ -62,7 +62,7 @@ class Piece:
     def __post_init__(self):
         self.__load_images()
         self.image = self._piece_images[(self.color, self.name)]
-        self.direction = 1 if self.color == "white" else -1
+        self.direction = -1 if self.color == "white" else 1
 
     def blitme(self, center: tuple[int, int]) -> None:
         """Draws the piece at its current location."""
