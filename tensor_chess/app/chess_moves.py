@@ -143,21 +143,4 @@ class Validators:
         self.validator["bishop"] = self._bishop_validator
         self.validator["queen"] = self._queen_validator
         self.validator["king"] = self._king_validator
-
-        # if not self.name:
-        #     raise ValueError("Validator name is required.")
-
-        # if self.name == "pawn":
-        #     self.validator = self._pawn_validator
-        # elif self.name == "rook":
-        #     self.validator = self._rook_validator
-        # elif self.name == "knight":
-        #     self.validator = self._knight_validator
-        # elif self.name == "bishop":
-        #     self.validator = self._bishop_validator
-        # elif self.name == "queen":
-        #     self.validator = self._queen_validator
-        # elif self.name == "king":
-        #     self.validator = self._king_validator
-        # else:
-        #     raise ValueError(f"Invalid validator name: {self.name}")
+        
