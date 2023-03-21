@@ -14,9 +14,6 @@ class Validators:
     grid: list[list[Square]]
     validator: dict[str, Callable[[Square, Square], bool]] = field(default_factory=dict)
 
-    # name: Optional[str] = None
-    # validator: Optional[Callable[[Square, Square], bool]] = None
-
     def _pawn_validator(self, start: Square, end: Square, direction: int) -> bool:
         """Validates a pawn move."""
 
@@ -49,8 +46,23 @@ class Validators:
                 and start.cord.y + 1 * direction == end.cord.y
                 and end.piece
             )
+        
+        def __en_passant() -> bool:
+            """Validates an en passant move."""
+            if direction == 1:
+                if start.cord.y != 4:
+                    return False
+            elif direction == -1:
+                if start.cord.y != 3:
+                    return False
+            return (
+                abs(start.cord.x - end.cord.x) == 1
+                and start.cord.y + 1 * direction == end.cord.y
+                and not end.piece
+                and self.grid[end.cord.x][start.cord.y].piece
+            )
 
-        return __single_move() or __double_move() or __capture()
+        return __single_move() or __double_move() or __capture() or __en_passant()
 
     def _rook_validator(self, start: Square, end: Square, _) -> bool:
         """Validates a rook move."""
