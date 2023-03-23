@@ -51,9 +51,9 @@ class ChessGame:
                     square
                     and self.selection
                     and (square != self.selection)
-                    and self.chess_board.validators.validator[
-                        self.selection.piece.name
-                    ](self.selection, square, self.selection.piece.direction)
+                    and self.selection.piece.validator(
+                        self.selection, square, self.selection.piece.direction
+                    )
                 ):
                     square.piece = self.selection.piece
                     self.selection.piece = None

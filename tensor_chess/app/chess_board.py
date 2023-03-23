@@ -1,10 +1,8 @@
 from dataclasses import dataclass
 
 import pygame
-from pygame import draw
 
 from chess_set import ChessSet, Piece
-from chess_moves import Validators
 
 
 @dataclass
@@ -41,16 +39,14 @@ class ChessBoard:
         self.square_size = square_size
         self.board_pos = board_pos
         self.board, self.grid = self.__create_board_surface()
-        self.validators = Validators(self.grid)
 
     def __create_board_surface(self) -> tuple[pygame.Surface, list[list[Square]]]:
         """Create a surface for the chess board."""
         board = pygame.Surface((self.square_size * 8, self.square_size * 8))
         board.fill((255, 255, 255))
-
-        chess_set = ChessSet(board)
-
         grid: list[list[Square]] = [[None for x in range(8)] for y in range(8)]
+        chess_set = ChessSet(board, grid)
+
         for y in range(8):
             for x in range(8):
                 if (y + x) % 2 == 0:
@@ -96,14 +92,3 @@ class ChessBoard:
                 return self.grid[x][y]
         except IndexError:
             pass
-
-    def highlight_selected_square(self):
-        square, *_ = self.get_square_under_mouse()
-        if square:
-            draw.rect(
-                self.board,
-                (255, 0, 0),
-                square.rect,
-                4,
-            )
-        return square
