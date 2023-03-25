@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "tensor-chess"
+name = "class-chess"
 version = "0.1.0"
 description = "Pygame chess app"
 authors = ["Antonio Zea Jr <zeajantonio@gmail.com>"]
 readme = "README.md"
-packages = [{include = "tensor_chess"}]
+packages = [{include = "class_chess"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
